@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class FizzBuzzViewController: UIViewController {
 
@@ -21,35 +22,65 @@ class FizzBuzzViewController: UIViewController {
     var brain = Brain()
     
     func setupGestures() {
-        let gesture1 = UITapGestureRecognizer(target: self, action: #selector(tapEventgameNumber))
-        let gesture2 = UITapGestureRecognizer(target: self, action: #selector(tapEventgameFizz))
-        let gesture3 = UITapGestureRecognizer(target: self, action: #selector(tapEventgameFizz))
-        let gesture4 = UITapGestureRecognizer(target: self, action: #selector(tapEventgameFizz))
+        let gesture1 = UITapGestureRecognizer(target: self, action: #selector(tapEventgame))
+        let gesture2 = UITapGestureRecognizer(target: self, action: #selector(tapEventgame))
+        let gesture3 = UITapGestureRecognizer(target: self, action: #selector(tapEventgame))
+        let gesture4 = UITapGestureRecognizer(target: self, action: #selector(tapEventgame))
         number.addGestureRecognizer(gesture1)
         fizz.addGestureRecognizer(gesture2)
         buzz.addGestureRecognizer(gesture3)
         fizzBuzz.addGestureRecognizer(gesture4)
     }
     
-    func tapEventgameNumber(sender: Any) {
-        //print(sender)
-        if !brain.nextNumberIsDivisible(by: 3) {
-            brain.incrementBy1()
-            counterLabel.text = "\(brain.counter)"
+    func tapEventgame(sender: UITapGestureRecognizer) {
+        
+        if let v = sender.view {
+            print("---> \(v.tag)")
+            if brain.executeOperation(GameOperation.getOperation(v.tag)) {
+                counterLabel.text = "\(brain.counter)"
+            }
+            
+/*            switch v.tag {
+            case 1:
+                brain.executeOperation(.number)
+                break
+            case 2:
+                brain.executeOperation(.fizz)
+                break
+            case 3:
+                brain.executeOperation(.buzz)
+                break
+            case 4:
+                brain.executeOperation(.fizzbuzz)
+                break
+            default:
+                break
+            }*/
+            
+            
+            
         }
         
     }
     
-    func tapEventgameFizz(sender: Any) {
-        //print(sender)
-        brain.incrementBy1()
-        counterLabel.text = "\(brain.counter)"
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGestures()
-        
+        testAlamofire()
+    }
+    
+    private func testAlamofire() {
+        Alamofire.request("https://httpbin.org/get").responseJSON { response in
+            print(response.request)  // original URL request
+            print(response.response) // HTTP URL response
+            print(response.data)     // server data
+            print(response.result)   // result of response serialization
+            
+            if let JSON = response.result.value {
+                print("JSON: \(JSON)")
+            }
+        }
     }
     
 }
